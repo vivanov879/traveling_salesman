@@ -77,7 +77,6 @@ while not heap_empty(q) do
   local i0, j0, cost = unpack(extract_top(q))
   for _, neighbor in pairs(get_neighbors(i0, j0)) do 
     i, j = unpack(neighbor)
-    print(i, j)
     local new_cost = cost_so_far[ij2id(i0, j0)] + graph_cost
     if cost_so_far[ij2id(i, j)] == nil or new_cost <  cost_so_far[ij2id(i, j)] then
        cost_so_far[ij2id(i, j)] = new_cost
@@ -89,7 +88,6 @@ while not heap_empty(q) do
 end
 
 dummy_pass = 1
-
   
   
   
