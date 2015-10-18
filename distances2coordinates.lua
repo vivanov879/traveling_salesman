@@ -82,7 +82,7 @@ end
 optim_state = {learningRate = 1e-2}
 
 
-for i = 1, 1000000 do
+for i = 1, 20000 do
 
   local _, loss = optim.adam(feval, params, optim_state)
   if i % 100 == 0 then
@@ -90,6 +90,8 @@ for i = 1, 1000000 do
     print(e)
   end
 end
+
+torch.save('coordinates.t7', e)
 
 dummy_pass = 1
 
