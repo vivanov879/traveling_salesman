@@ -32,12 +32,14 @@ update_priority(q, dist[2])
 
 while not heap_empty(q) do 
   v0, d0 = unpack(extract_top(q))
+  print(v0, 'visited')
   for edge_id, edge in pairs(edges) do 
     e1 = edge[1]
     e2 = edge[2]
     if edge[1] == v0 then
       if dist[e2][2] > d0 + w[edge_id] then 
-        dist[e2][2] = d0 + w[edge_id] 
+        dist[e2][2] = d0 + w[edge_id]
+        update_priority(q, dist[e2])
       end
     end
   end
