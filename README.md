@@ -17,6 +17,8 @@ A star search for a maze:
 - `th a_star_no_closed.lua` without closed set.
 
 Lua implementation of disjoint set is `disjoint.lua`.
+
+
 Priority queue implementation `pq3.lua` is taken from http://web.cs.wpi.edu/~cs2223/b11/.
 
 
