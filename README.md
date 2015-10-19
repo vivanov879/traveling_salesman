@@ -17,7 +17,7 @@ A star search for a maze:
 
 
 
-as specified in http://www.public.asu.edu/~huanliu/AI04S/project1.htm. Heuristic function = distance to the nearest unvisited city from the current city + estimated distance to travel all the unvisited cities (MST heuristic used here) + nearest distance from an unvisited city to the start city. Note that this is an admissible heuristic function.
+Traveling salesman solution is specified at http://www.public.asu.edu/~huanliu/AI04S/project1.htm. Heuristic function = distance to the nearest unvisited city from the current city + estimated distance to travel all the unvisited cities (MST heuristic used here) + nearest distance from an unvisited city to the start city. Note that this is an admissible heuristic function.
 Data is taken from http://people.sc.fsu.edu/~jburkardt/datasets/tsp/tsp.html, `data.txt` contains distances between each pair of cities.
 
 Ds
