@@ -1,8 +1,8 @@
 Torch implementation of traveling salesman problem using A star search.
 
-A star search:
-1. In Terminal.app run `th distances2coordinates.lua` to convert distances to xy coordinates.
-2. Run `th tsp.lua` to run the a star search algorithm and output the path: ![th visualize_word_vectors.lua](https://github.com/vivanov879/traveling_salesman/blob/master/tsp_solution.png)
+A star search:-
+- In Terminal.app run `th distances2coordinates.lua` to convert distances to xy coordinates.
+- Run `th tsp.lua` to run the a star search algorithm and output the path: ![th visualize_word_vectors.lua](https://github.com/vivanov879/traveling_salesman/blob/master/tsp_solution.png)
 
 Kruskal algorithm:
 - Run `th kruskal_run.lua`
