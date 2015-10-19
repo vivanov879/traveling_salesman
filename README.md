@@ -22,5 +22,5 @@ A star search for a maze:
 Traveling salesman solution is specified at http://www.public.asu.edu/~huanliu/AI04S/project1.htm. Heuristic function = distance to the nearest unvisited city from the current city + estimated distance to travel all the unvisited cities (MST heuristic used here) + nearest distance from an unvisited city to the start city. Note that this is an admissible heuristic function.
 Data is taken from http://people.sc.fsu.edu/~jburkardt/datasets/tsp/tsp.html, `data.txt` contains distances between each pair of cities.
 
-Ds
+To find out about when closed set should be used, what are the requirements for A star search algorithm and when dijkstra algorithm is equivalent to a star search, see https://en.wikipedia.org/wiki/A*_search_algorithm.
 
