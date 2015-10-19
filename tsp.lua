@@ -6,6 +6,7 @@ require 'Embedding'
 local model_utils=require 'model_utils'
 require 'project_utils'
 require 'pq3'
+require 'kruskal'
 nngraph.setDebug(true)
 
 xy = torch.load('coordinates.t7')
@@ -19,10 +20,10 @@ function calc_dist(v0, v)
   local y2 = xy[v][2]
   return ((x1 - x2)^2 + (y1 - y2)^2)^0.5
 
-function dist2unvisited(v0)
+function dist2unvisited(v0, visited)
   local d_min = math.huge
   local v_min = nil
-  for v = 1, maze:size(1) do 
+  for v = 1, xy:size(1) do 
     if not visited[v] then
       local d = calc_dist(v0, v)
       if d < d_min then
@@ -33,68 +34,118 @@ function dist2unvisited(v0)
   end
   return v_min, d_min
 
-
-
-function get_neighbors(i, j)
-  local t = {{i+1, j}, {i-1, j}, {i, j+1}, {i, j-1}}
-  local l = {}
-  for _, p in pairs(t) do
-    local i, j = unpack(p)
-    if i >= 1 and i <= 20 and j >= 1 and j <= 20 and maze[i][j] ~= 0 then
-      l[#l + 1] = p
+function calc_mst_len(visited)
+  for v = 1, xy:size(1) do
+    local l = {}
+    if not visited[v] then
+      l[#l + 1] = v
+    end
+    edges = {}
+    for i = 1, #l - 1 do 
+      for j = i+1, #l do 
+        edges[#edges + 1] = {calc_dist(i, j), i, j}
+      end
     end
   end
-  return l
+  local mst = kruskal(l, edges)
+  local mst_len = 0
+  for _, edge in pairs(mst) do
+    mst_len = mst_len + edge[1]
+  end
+  return mst_len
 end
-
-
-function heuristic(a, b)
-  local x1, y1 = unpack(a)
-  local x2, y2 = unpack(b)
-  local d = ((x1 - x2)^2 + (y1 - y2)^2)^0.5
-  return d
-end
-  
-graph_cost = 1
 
 function cmp(x, y)
   return x[3] < y[3]
 end
 
-id2ij = {}
-for i = 1, 20 do 
-  for j = 1, 20 do
-    id2ij[(i-1)* 20 + j] = {i, j}
+function s2id(s)
+  --multipliers we use to get hash from state elements are chosen to be high enough to cover the possible values of the state element
+  local hash = 0
+  for _, x in s['visited'] do
+    hash = hash + (2^x)
   end
-end
-
-function ij2id(i, j)
-  return (i-1) * 20 + j
+  hash = hash + s['current'] * 1e5
+  return hash  
 end
 
 q = make_empty_heap(cmp)
-dist = {}
-goal = {20, 20}
 
-dist[ij2id(1, 1)] = {1,1,0}
-insert(q, dist[ij2id(1,1)])
+start0 = {}
+start0['visited'] = {1}
+start0['current'] = 1
+start0['d'] = 0
+
+function check_goal(s)
+  return s['current'] == 1 and #(s['visited']) == xy:size(1)
+
+function state_in(states, state0)
+  for _, state in pairs(states) do 
+    v = state['visited']
+    v0 = state0['visited']
+    if #v == #v0 then
+      local flag = true
+      for i, _ in pairs(v) do 
+        if v[i] ~= v0[i] then
+          flag = false
+        end
+      end
+      if flag then 
+        return true
+      end
+    end
+    return false
+end
+
+function check_mem_table(l, v)
+  for _, x in pairs(l) do 
+    if x == v then
+      return true
+    end
+  end
+  return false
+end
+
+
+function clone_table(l)
+  local t = {}
+  for _, v in pairs(l) do 
+    t[#t + 1] = v
+  end
+  return t
+end
+
+
+q_states = {}
+q_states[s2id(start0)] = {start0['visited'], start0['current'], 0}
+insert(q, q_states[start0])
 
 cost_so_far = {}
-cost_so_far[ij2id(1, 1)] = 0
+cost_so_far[s2id(start0)] = 0
 
 came_from = {}
 
 while not heap_empty(q) do
-  local i0, j0, cost = unpack(extract_top(q))
-  for _, neighbor in pairs(get_neighbors(i0, j0)) do 
-    i, j = unpack(neighbor)
-    local new_cost = cost_so_far[ij2id(i0, j0)] + graph_cost
-    if cost_so_far[ij2id(i, j)] == nil or new_cost <  cost_so_far[ij2id(i, j)] then
-       cost_so_far[ij2id(i, j)] = new_cost
-       local priority = new_cost + heuristic(neighbor, goal)
-       dist[ij2id(i, j)] = {i, j, priority}
-       update_or_insert(q, dist[ij2id(i, j)])
-       came_from[ij2id(i, j)] = {i0, j0}
+  local state0 = extract_top(q)
+  for i = 1, xy:size(1) do
+    if i != state0['current'] and not check_mem_table(state0['visited'], i) then
+      local neighbor = {}
+      neighbor['current'] = i
+      neighbor['visited'] = clone_table(state0['visited'])
+      table.insert(neighbor['visited'], i)
+      table.sort(neighbor['visited'])
+      local new_cost = cost_so_far[s2id(state0)] + calc_dist(state0['current'], neighbor['current'])
+      if cost_so_far[s2id(neighbor)] == nil or new_cost <  cost_so_far[s2id(neighbor)] then
+        cost_so_far[s2id(neighbor)] = new_cost
+        local priority = new_cost + heuristic(neighbor, goal)
+        if q_states[s2id(neighbor)] == nil then
+          q_states[s2id(neighbor)] = {neighbor['visited'], neighbor['current'], priority}
+          insert(q, q_states[s2id(neighbor)])
+        else
+          dist[ij2id(i, j)][3] = priority
+          update(q, q_states[s2id(neighbor)])
+        update_or_insert(q, dist[ij2id(i, j)])
+        came_from[ij2id(i, j)] = {i0, j0}
     end
   end
 end

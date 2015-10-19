@@ -93,9 +93,14 @@ while not heap_empty(q) do
     if cost_so_far[ij2id(i, j)] == nil or new_cost <  cost_so_far[ij2id(i, j)] then
        cost_so_far[ij2id(i, j)] = new_cost
        local priority = new_cost + heuristic(neighbor, goal)
-       dist[ij2id(i, j)] = {i, j, priority}
-       update_or_insert(q, dist[ij2id(i, j)])
-       came_from[ij2id(i, j)] = {i0, j0}
+       if dist[ij2id(i, j)] == nil then
+        dist[ij2id(i, j)] = {i, j, priority}
+        insert(q, dist[ij2id(i, j)])
+      else  
+        dist[ij2id(i, j)][3] = priority
+        update(q, dist[ij2id(i, j)])
+      end
+      came_from[ij2id(i, j)] = {i0, j0}
     end
   end
 end
