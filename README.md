@@ -9,7 +9,7 @@ Kruskal algorithm:
 
 
 Dijkstra algorithm:
-- Run `th dijkstra.lua` contains dijkstra algorithm
+- Run `th dijkstra.lua` which contains dijkstra algorithm
 
 
 A star search for a maze:
