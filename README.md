@@ -5,7 +5,7 @@ A star search:
 2. Run `th tsp.lua` to run the a star search algorithm and output the path: ![th visualize_word_vectors.lua](https://github.com/vivanov879/traveling_salesman/blob/master/tsp_solution.png)
 
 Kruskal algorithm:
-1. Run `th kruskal_run.lua`
+- Run `th kruskal_run.lua`
 
 Dijkstra algorithm:
 - Run `th dijkstra.lua` contains dijkstra algorithm
