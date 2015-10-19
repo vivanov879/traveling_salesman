@@ -9,16 +9,6 @@ require 'disjointset'
 nngraph.setDebug(true)
 
 
-local vertices = {'A', 'B', 'C', 'D'}
-local edges = {
-            {1, 'A', 'B'},
-            {5, 'A', 'C'},
-            {3, 'A', 'D'},
-            {4, 'B', 'C'},
-            {2, 'B', 'D'},
-            {1, 'C', 'D'},
-        }
-
 
 function f(t1, t2)
   return t1[1] < t2[1]
@@ -42,7 +32,19 @@ function kruskal(vertices, edges)
   end
   return mst
 end
+--[[
+local vertices = {'A', 'B', 'C', 'D'}
+local edges = {
+            {1, 'A', 'B'},
+            {5, 'A', 'C'},
+            {3, 'A', 'D'},
+            {4, 'B', 'C'},
+            {2, 'B', 'D'},
+            {1, 'C', 'D'},
+        }
+
 
 local mst = kruskal(vertices, edges)
 
 dummy_pass = 1
+--]]
