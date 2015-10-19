@@ -8,11 +8,11 @@ Kruskal algorithm:
 1. Run `th kruskal_run.lua`
 
 Dijkstra algorithm:
-1. Run `th dijkstra.lua` contains dijkstra algorithm
+- Run `th dijkstra.lua` contains dijkstra algorithm
 
 A star search for a maze:
-1. `th a_star_closed.lua` using closed set.
-2. `th a_star_no_closed.lua` without closed set.
+- `th a_star_closed.lua` using closed set.
+- `th a_star_no_closed.lua` without closed set.
 
 
 
