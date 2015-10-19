@@ -7,6 +7,7 @@ local model_utils=require 'model_utils'
 require 'project_utils'
 require 'pq3'
 require 'kruskal'
+require 'gnuplot'
 nngraph.setDebug(true)
 
 xy = torch.load('coordinates.t7')
@@ -173,6 +174,22 @@ function tsp()
 end
 
 local state0 = tsp()
+function find_omitted(visited)
+  for i = 1, xy:size(1) do
+    if not check_mem_table(visited, i) then
+      return i
+    end
+  end
+end
+
+table.insert(state0['visited'], find_omitted(state0['visited']))
+
+gnuplot.plot(xy, '.')
+for i, v in pairs(state0['visited']) do 
+  --gnuplot.raw(" set label 'ward' at ( 0.12, 0.54 ) ")
+  gnuplot.raw(" set label '" .. i .. "' at " .. xy[v][1] .. "," .. xy[v][2] .. " " )
+end
+
 
 dummy_pass = 1
   
