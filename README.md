@@ -7,8 +7,10 @@ A star search:
 Kruskal algorithm:
 - Run `th kruskal_run.lua`
 
+
 Dijkstra algorithm:
 - Run `th dijkstra.lua` contains dijkstra algorithm
+
 
 A star search for a maze:
 - `th a_star_closed.lua` using closed set.
