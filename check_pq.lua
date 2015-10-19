@@ -25,8 +25,16 @@ for _, e in pairs(es) do
 end
 
 print(find_top(q))
+
+-- `q` changed because the tables are passed by reference
 es[2][2] = 0.5
 update_priority(q, es[2])
+
+print(find_top(q))
+
+-- `q` doesnt see the change
+es[3] = {'c', 0.1}
+update_priority(q, es[3])
 
 print(find_top(q))
 
