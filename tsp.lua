@@ -19,8 +19,9 @@ function calc_dist(v0, v)
   local x2 = xy[v][1]
   local y2 = xy[v][2]
   return ((x1 - x2)^2 + (y1 - y2)^2)^0.5
+end
 
-function dist2unvisited(v0, visited)
+function calc_dist2closest_unvisited(v0, visited)
   local d_min = math.huge
   local v_min = nil
   for v = 1, xy:size(1) do 
@@ -33,6 +34,7 @@ function dist2unvisited(v0, visited)
     end
   end
   return v_min, d_min
+end
 
 function calc_mst_len(visited)
   for v = 1, xy:size(1) do
@@ -55,6 +57,14 @@ function calc_mst_len(visited)
   return mst_len
 end
 
+function heuristic(v0, visited, start0)
+  local mst_len = calc_mst_len(visited)
+  local v1, d1 = calc_dist2closest_unvisited
+  local d2 = calc_dist(v1, start0)
+  return d1 + d2 + mst_len
+end
+
+
 function cmp(x, y)
   return x[3] < y[3]
 end
@@ -62,7 +72,7 @@ end
 function s2id(s)
   --multipliers we use to get hash from state elements are chosen to be high enough to cover the possible values of the state element
   local hash = 0
-  for _, x in s['visited'] do
+  for _, x in pairs(s['visited']) do
     hash = hash + (2^x)
   end
   hash = hash + s['current'] * 1e5
@@ -78,8 +88,10 @@ start0['d'] = 0
 
 function check_goal(s)
   return s['current'] == 1 and #(s['visited']) == xy:size(1)
+end
 
-function state_in(states, state0)
+function state_in_heap(h, state0)
+  local states = h['locations']
   for _, state in pairs(states) do 
     v = state['visited']
     v0 = state0['visited']
@@ -94,7 +106,8 @@ function state_in(states, state0)
         return true
       end
     end
-    return false
+  end
+  return false
 end
 
 function check_mem_table(l, v)
@@ -128,35 +141,26 @@ came_from = {}
 while not heap_empty(q) do
   local state0 = extract_top(q)
   for i = 1, xy:size(1) do
-    if i != state0['current'] and not check_mem_table(state0['visited'], i) then
+    if i ~= state0['current'] and not check_mem_table(state0['visited'], i) then
       local neighbor = {}
       neighbor['current'] = i
       neighbor['visited'] = clone_table(state0['visited'])
-      table.insert(neighbor['visited'], i)
-      table.sort(neighbor['visited'])
       local new_cost = cost_so_far[s2id(state0)] + calc_dist(state0['current'], neighbor['current'])
       if cost_so_far[s2id(neighbor)] == nil or new_cost <  cost_so_far[s2id(neighbor)] then
         cost_so_far[s2id(neighbor)] = new_cost
-        local priority = new_cost + heuristic(neighbor, goal)
+        local priority = new_cost + heuristic(neighbor['current'], neighbor['visited'], start0['current'])
         if q_states[s2id(neighbor)] == nil then
           q_states[s2id(neighbor)] = {neighbor['visited'], neighbor['current'], priority}
           insert(q, q_states[s2id(neighbor)])
         else
-          dist[ij2id(i, j)][3] = priority
+          q_states[s2id(neighbor)][3] = priority
           update(q, q_states[s2id(neighbor)])
-        update_or_insert(q, dist[ij2id(i, j)])
-        came_from[ij2id(i, j)] = {i0, j0}
+          came_from[s2id(neighbor)] = state0
+        end
+      end
     end
   end
 end
-
-i, j = unpack(goal)
-while i ~= 1 and j ~= 1 do
-  maze[i][j] = 2
-  i, j = unpack(came_from[ij2id(i, j)])
-end
-
-print(maze)
 
 
 dummy_pass = 1
