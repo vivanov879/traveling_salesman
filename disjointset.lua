@@ -21,7 +21,7 @@ function find_set(x)
   if x['parent'] ~= x then
     x['parent'] = find_set(x['parent'])
   end
-  return x
+  return x['parent']
 end
 
 function union_set(x, y)
