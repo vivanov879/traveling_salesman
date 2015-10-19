@@ -17,10 +17,7 @@ local edges = {
             {4, 'B', 'C'},
             {2, 'B', 'D'},
             {1, 'C', 'D'},
-
         }
-
-
 
 
 function f(t1, t2)
