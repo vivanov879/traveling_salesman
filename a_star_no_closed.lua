@@ -8,8 +8,11 @@ require 'project_utils'
 require 'pq3'
 nngraph.setDebug(true)
 
-maze = torch.ones(40, 40)
+maze = torch.ones(20, 20)
 
+maze[1][4] = 0
+maze[2][4] = 0
+maze[3][4] = 0
 maze[4][4] = 0
 maze[5][4] = 0
 maze[6][4] = 0
@@ -17,13 +20,20 @@ maze[7][4] = 0
 maze[8][4] = 0
 maze[9][4] = 0
 
-maze[40][20] = 0
-maze[39][20] = 0
-maze[38][20] = 0
-maze[37][20] = 0
-maze[36][20] = 0
-maze[35][20] = 0
-maze[34][20] = 0
+maze[20][10] = 0
+maze[19][10] = 0
+maze[18][10] = 0
+maze[17][10] = 0
+maze[16][10] = 0
+maze[15][10] = 0
+maze[14][10] = 0
+maze[13][10] = 0
+maze[12][10] = 0
+maze[11][10] = 0
+maze[10][10] = 0
+maze[9][10] = 0
+maze[8][10] = 0
+maze[7][10] = 0
 
 
 function get_neighbors(i, j)
@@ -31,7 +41,7 @@ function get_neighbors(i, j)
   local l = {}
   for _, p in pairs(t) do
     local i, j = unpack(p)
-    if i >= 1 and i <= 40 and j >= 1 and j <= 40 and maze[i][j] ~= 0 then
+    if i >= 1 and i <= 20 and j >= 1 and j <= 20 and maze[i][j] ~= 0 then
       l[#l + 1] = p
     end
   end
@@ -53,25 +63,27 @@ function cmp(x, y)
 end
 
 id2ij = {}
-for i = 1, 40 do 
-  for j = 1, 40 do
-    id2ij[(i-1)* 40 + j] = {i, j}
+for i = 1, 20 do 
+  for j = 1, 20 do
+    id2ij[(i-1)* 20 + j] = {i, j}
   end
 end
 
 function ij2id(i, j)
-  return (i-1) * 40 + j
+  return (i-1) * 20 + j
 end
 
 q = make_empty_heap(cmp)
 dist = {}
-goal = {40, 40}
+goal = {20, 20}
 
 dist[ij2id(1, 1)] = {1,1,0}
 insert(q, dist[ij2id(1,1)])
 
 cost_so_far = {}
 cost_so_far[ij2id(1, 1)] = 0
+
+came_from = {}
 
 while not heap_empty(q) do
   local i0, j0, cost = unpack(extract_top(q))
@@ -83,9 +95,19 @@ while not heap_empty(q) do
        local priority = new_cost + heuristic(neighbor, goal)
        dist[ij2id(i, j)] = {i, j, priority}
        update_or_insert(q, dist[ij2id(i, j)])
+       came_from[ij2id(i, j)] = {i0, j0}
     end
   end
 end
+
+i, j = unpack(goal)
+while i ~= 1 and j ~= 1 do
+  maze[i][j] = 2
+  i, j = unpack(came_from[ij2id(i, j)])
+end
+
+print(maze)
+
 
 dummy_pass = 1
   
