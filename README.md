@@ -16,7 +16,8 @@ A star search for a maze:
 - `th a_star_closed.lua` using closed set.
 - `th a_star_no_closed.lua` without closed set.
 
-
+Lua implementation of disjoint set is `disjoint.lua`.
+Priority queue implementation `pq3.lua` is taken from http://web.cs.wpi.edu/~cs2223/b11/.
 
 
 Traveling salesman solution is specified at http://www.public.asu.edu/~huanliu/AI04S/project1.htm. Heuristic function = distance to the nearest unvisited city from the current city + estimated distance to travel all the unvisited cities (MST heuristic used here) + nearest distance from an unvisited city to the start city. Note that this is an admissible heuristic function.
