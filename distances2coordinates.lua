@@ -92,6 +92,11 @@ for i = 1, 20000 do
 end
 
 torch.save('coordinates.t7', e)
+f = io.open('coordinates.txt', 'w')
+for i = 1, e:size(1) do 
+  f:write(tostring(e[i][1]) .. ' ' .. tostring(e[i][2]) .. '\n');
+  
+end
 
 dummy_pass = 1
 
